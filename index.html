@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>3 Years of Us | Our Anniversary</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+    /* --- BASIC RESET --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #faf7f2; color: #2c2c2c; overflow-x: hidden; line-height: 1.6; }
+    :root {
+        /* Palette from https://coolors.co/palette/d3d5d4-a2c5ac-9db5b2-878e99-7f6a93 */
+        --rose: #a2c5ac;
+        --rose-dark: #9db5b2;
+        --gold: #7f6a93;
+        --cream: #d3d5d4;
+        --charcoal: #2c2c2c; /* kept as requested */
+        --soft-gray: #878e99;
+    }
+
+    /* --- FLOATING HEARTS --- */
+    .hearts-container { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden; }
+    .heart { position:absolute; font-size:20px; color:var(--rose); opacity:0.3; animation: float 15s infinite ease-in-out; }
+    @keyframes float {
+        0% { transform: translateY(100vh) rotate(0deg); opacity:0; }
+        10%,90% { opacity:0.3; }
+        100% { transform: translateY(-100vh) rotate(720deg); opacity:0; }
+    }
+
+    /* --- HERO SECTION --- */
+    .hero {
+        min-height: 100vh;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+        text-align:center;
+        position:relative;
+        z-index:1;
+        padding:2rem;
+        background: linear-gradient(135deg, var(--cream) 0%, #fff 100%);
+    }
+    .hero h1 {
+        font-family:'Playfair Display', serif;
+        font-size:clamp(2.5rem,8vw,5rem);
+        font-weight:400;
+        margin-bottom:1rem;
+        background: linear-gradient(135deg, var(--charcoal) 0%, var(--rose-dark) 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: fadeInUp 1s ease-out;
+    }
+    .hero .subtitle { font-size:1.2rem; color:#666; margin-bottom:2rem; font-style:italic; animation: fadeInUp 1s ease-out 0.3s both; }
+    .anniversary-date { font-family:'Playfair Display', serif; font-size:1.5rem; color:var(--gold); margin-bottom:3rem; animation: fadeInUp 1s ease-out 0.6s both; }
+    .scroll-indicator { position:absolute; bottom:2rem; animation:bounce 2s infinite; cursor:pointer; color:var(--rose-dark); font-size:2rem; }
+    @keyframes bounce {0%,20%,50%,80%,100%{transform:translateY(0);} 40%{transform:translateY(-20px);} 60%{transform:translateY(-10px);} }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(30px);} to{opacity:1;transform:translateY(0);} }
+
+    /* --- TIMELINE --- */
+    .timeline-section { padding:6rem 2rem; max-width:1000px; margin:0 auto; position:relative; z-index:1; }
+    .section-title { font-family:'Playfair Display', serif; font-size:2.5rem; text-align:center; margin-bottom:4rem; color:var(--charcoal); }
+    .timeline { position:relative; padding:2rem 0; }
+    .timeline::before { content:''; position:absolute; left:50%; transform:translateX(-50%); width:2px; height:100%; background: linear-gradient(to bottom, var(--rose), var(--gold)); }
+    .timeline-item { margin-bottom:4rem; position:relative; width:100%; display:flex; justify-content:center; opacity:0; transform:translateY(50px); transition:all 0.8s ease-out; }
+    .timeline-item.visible { opacity:1; transform:translateY(0); }
+    .timeline-content { background:white; padding:2rem; border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,0.05); max-width:400px; width:45%; position:relative; transition:transform 0.3s ease, box-shadow 0.3s ease; }
+    .timeline-content:hover { transform:translateY(-5px); box-shadow:0 20px 60px rgba(0,0,0,0.1); }
+    .timeline-item:nth-child(odd) .timeline-content { margin-right:auto; margin-left:0; text-align:right; }
+    .timeline-item:nth-child(even) .timeline-content { margin-left:auto; margin-right:0; text-align:left; }
+    .timeline-dot { position:absolute; left:50%; transform:translateX(-50%); width:20px; height:20px; background:var(--gold); border-radius:50%; border:4px solid white; box-shadow:0 0 0 4px var(--rose); }
+    .timeline-year { font-family:'Playfair Display', serif; font-size:1.2rem; color:var(--gold); margin-bottom:0.5rem; }
+    .timeline-title { font-size:1.3rem; font-weight:600; margin-bottom:0.5rem; color:var(--charcoal); }
+    .timeline-desc { color:#666; font-size:0.95rem; line-height:1.6; }
+
+    /* --- MEMORY GALLERY --- */
+    .gallery-section { background:white; padding:6rem 2rem; position:relative; z-index:1; }
+    .gallery-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:2rem; max-width:1200px; margin:0 auto; }
+    .memory-card { background:var(--soft-gray); border-radius:15px; overflow:hidden; position:relative; aspect-ratio:1; cursor:pointer; transition:transform 0.3s ease; }
+    .memory-card:hover { transform:scale(1.05); }
+    .memory-card .placeholder { width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; color:#999; font-size:3rem; background:linear-gradient(135deg,#f5f5f5 0%,#e8e8e8 100%); }
+    .memory-card img { width:100%; height:100%; object-fit:cover; display:none; }
+    .memory-card.has-image img { display:block; }
+    .memory-card.has-image .placeholder { display:none; }
+    .memory-caption { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(to top, rgba(0,0,0,0.7), transparent); color:white; padding:2rem 1rem 1rem; font-size:0.9rem; opacity:0; transition:opacity 0.3s ease; }
+    .memory-card:hover .memory-caption { opacity:1; }
+    .add-photo-btn { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; border:2px dashed var(--rose); color:var(--rose-dark); padding:0.5rem 1rem; border-radius:20px; cursor:pointer; font-size:0.9rem; opacity:0; transition:opacity 0.3s ease; }
+    .memory-card:hover .add-photo-btn { opacity:1; }
+    .memory-card.has-image .add-photo-btn { display:none; }
+
+    /* --- LOVE LETTERS --- */
+    .letters-section { padding:6rem 2rem; max-width:800px; margin:0 auto; position:relative; z-index:1; }
+    .letter-container { background:white; border-radius:20px; padding:3rem; box-shadow:0 20px 60px rgba(0,0,0,0.05); position:relative; overflow:hidden; }
+    .letter-container::before { content:'❝'; position:absolute; top:1rem; left:2rem; font-size:4rem; color:var(--rose); opacity:0.3; font-family:Georgia, serif; }
+    .letter-text { font-family:'Playfair Display', serif; font-size:1.3rem; line-height:2; color:var(--charcoal); margin-bottom:2rem; font-style:italic; transition:opacity 0.3s ease; }
+    .letter-navigation { display:flex; justify-content:center; gap:1rem; margin-top:2rem; }
+    .nav-btn { background:var(--rose); color:white; border:none; width:50px; height:50px; border-radius:50%; cursor:pointer; font-size:1.2rem; display:flex; align-items:center; justify-content:center; transition:all 0.3s ease; }
+    .nav-btn:hover { background:var(--rose-dark); transform:scale(1.1); }
+    .letter-counter { text-align:center; margin-top:1rem; color:#999; font-size:0.9rem; }
+
+    /* --- FINAL MESSAGE --- */
+    .final-section { min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:4rem 2rem; background: linear-gradient(135deg, var(--cream) 0%, #fff 50%, var(--rose) 100%); position:relative; z-index:1; }
+    .final-message { font-family:'Playfair Display', serif; font-size:clamp(1.5rem,5vw,3rem); max-width:800px; line-height:1.6; margin-bottom:3rem; color:var(--charcoal); }
+    .signature { font-size:1.2rem; color:var(--rose-dark); font-style:italic; }
+
+    /* --- LOVE JAR --- */
+    .love-jar-section { padding:6rem 2rem; max-width:800px; margin:0 auto; position:relative; z-index:1; background:var(--cream); }
+    .jar-container { text-align:center; position:relative; height:300px; display:flex; align-items:center; justify-content:center; }
+    .jar { font-size:120px; cursor:pointer; transition:transform 0.3s ease; position:relative; }
+    .jar:hover { transform:scale(1.1); }
+    .reasons-container { position:absolute; width:100%; height:100%; pointer-events:none; }
+    .reason { position:absolute; font-family:'Playfair Display', serif; font-size:1.1rem; color:var(--rose-dark); opacity:0; animation:floatUp 3s ease-out forwards; white-space:nowrap; }
+    @keyframes floatUp { 0% { opacity:0; transform:translateY(0) scale(0.8); } 20% { opacity:1; } 100% { opacity:0; transform:translateY(-200px) scale(1); } }
+
+    /* --- SEALED LETTER --- */
+    .sealed-letter-section { padding:6rem 2rem; max-width:900px; margin:0 auto; position:relative; z-index:1; background:white; }
+    .sealed-container { display:flex; gap:3rem; align-items:center; justify-content:center; flex-wrap:wrap; }
+    .envelope { font-size:150px; cursor:pointer; transition:all 0.4s ease; filter:drop-shadow(0 5px 15px rgba(0,0,0,0.1)); }
+    .envelope:hover { transform:scale(1.05) translateY(-5px); filter:drop-shadow(0 10px 25px rgba(0,0,0,0.15)); }
+    .envelope.opened { animation:openEnvelope 0.6s ease forwards; }
+    @keyframes openEnvelope { 0% { transform:rotateX(0); } 100% { transform:rotateX(-30deg); } }
+    .sealed-letter-content { max-width:500px; background:var(--soft-gray); padding:2.5rem; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.08); display:none; text-align:left; opacity:0; transition:opacity 0.4s ease 0.3s; }
+    .sealed-letter-content.revealed { display:block; opacity:1; }
+    .sealed-letter-content h3 { font-family:'Playfair Display', serif; font-size:1.4rem; color:var(--charcoal); margin-bottom:1rem; text-align:center; }
+    .sealed-letter-content p { font-family:'Playfair Display', serif; font-size:1.1rem; line-height:1.8; color:var(--charcoal); margin-bottom:1rem; }
+    .close-letter { text-align:center; margin-top:1.5rem; }
+    .close-letter button { background:var(--rose); color:white; border:none; padding:0.7rem 1.5rem; border-radius:20px; cursor:pointer; font-size:0.95rem; transition:all 0.3s ease; }
+    .close-letter button:hover { background:var(--rose-dark); transform:scale(1.05); }
+
+    /* --- MUSIC CONTROL --- */
+    .music-control { position:fixed; top:2rem; left:2rem; z-index:100; display:flex; align-items:center; }
+    .music-btn { background:var(--rose); color:white; border:none; width:40px; height:40px; border-radius:50%; cursor:pointer; font-size:1.2rem; display:flex; align-items:center; justify-content:center; transition:all 0.3s ease; }
+    .music-btn:hover { background:var(--rose-dark); transform:scale(1.1); }
+    .music-label { display:none; }
+</style>
+</head>
+<body>
+<!-- Floating Hearts -->
+<div class="hearts-container" id="hearts"></div>
+
+<!-- Hero Section -->
+<section class="hero">
+    <h1>Three Years of Us</h1>
+    <p class="subtitle">"The best thing to hold onto in life is each other."</p>
+    <div class="anniversary-date">February 28th — Our Day</div>
+    <div id="daysTogether" style="font-size:1.2rem; color:var(--rose-dark); margin-bottom:2rem;"></div>
+    <div class="scroll-indicator" onclick="document.getElementById('timeline').scrollIntoView({behavior:'smooth'})">↓</div>
+</section>
+
+<!-- Timeline Section -->
+<section class="timeline-section" id="timeline">
+    <h2 class="section-title">Our Journey Together</h2>
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-year">2023 - The Year I Close You</div>
+                <div class="timeline-title">This was The Year I Gave My Heart a Name.</div>
+                <div class="timeline-desc">
+                    Loving you stopped being a feeling and becoming a decision — a real one. We were young, figuring things out, but I knew even then that what we had was different. Every laugh, every late-night call, every small "I love you" felt like the beginning of something bigger than both of us.
+                    This was the year I chose you... and I never stopped choosing you after that.
+                </div>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-year">2024 - The Year We Learned Love.</div>
+                <div class="timeline-title">This was The Year That Tested Us.</div>
+                <div class="timeline-desc">
+                    Not because we didn't love each other — but because love was teaching us how to grow. We had misunderstandings. We had moments where things felt heavy. But we stayed. We talked. We tried again.
+                    We didn't run when things got hard. We held on tighter. 
+                    And somewhere in all of that, out love stopped being fragile. It became strong. Intentional. Real.
+                </div>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-year">2025 - The Year Forever feels Real</div>
+                <div class="timeline-title">This Year Our Love Felt Calmer.</div>
+                <div class="timeline-desc">
+                    Deeper. Safer.
+                    We weren't just two people in love - we were two people building something. We talked about a future like it was something we're walking towards together. A home. Little footsteps running through it. A life that feels warm amd steady.
+                    I dont just love you because you're mine.
+                    I love you because we've grown, we stayed, and we keep choosing eaching other - even when it isn't easy.
+                    And thats what makes this feel like forever.
+                </div>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-year">2026 - The Year We Keep Choosing Us</div>
+                <div class="timeline-title">This is The Year That Proves we Weren't Just Young and in Love - </div>
+                <div class="timeline-desc">
+                    we were serious about it.
+                    Every year we're grown a little more ourselves, and somehow, instead of growing apart, we've grown closer. More patient. More understanding. More sure.
+                    2026 feels like a quiet kind of strength.
+                    Not loud, not dramatic - just steady. The kind of love that survives distance, stress, misunderstandings, and still comes back softer every time.
+                    This year isn't about beginnings anymore. 
+                    It's about commitment.
+                    Its about looking at each other and knowing:
+                    "We've been through things. And we're still here."
+                    AND THAT MEANS SOMETHING.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Love Letters -->
+<section class="letters-section">
+    <h2 class="section-title">Things I Want You to Always Remember</h2>
+    <div class="letter-container">
+        <div class="letter-text" id="letterText"></div>
+        <div class="letter-navigation">
+            <button class="nav-btn" onclick="prevLetter()">‹</button>
+            <button class="nav-btn" onclick="nextLetter()">›</button>
+        </div>
+        <div class="letter-counter">Letter <span id="currentLetter">1</span> / <span id="totalLetters">1</span></div>
+    </div>
+</section>
+
+<!-- Photo Gallery -->
+<section class="gallery-section">
+    <h2 class="section-title">Our Favorite Memories</h2>
+    <div class="gallery-grid" id="gallery">
+        <div class="memory-card">
+            <img src="Jan 21, 2024.jpeg" alt="Memory 1">
+            <div class="placeholder">📷</div>
+        </div>
+        <div class="memory-card">
+            <img src="idk this date..jpeg" alt="Memory 2">
+            <div class="placeholder">📷</div>
+        </div>
+        <div class="memory-card">
+            <img src="May 27, 2024.jpeg" alt="Memory 3">
+            <div class="placeholder">📷</div>
+        </div>
+        <div class="memory-card">
+            <img src="Dec 26, 2024 (2).jpeg" alt="Memory 4">
+            <div class="placeholder">📷</div>
+        </div>
+        <div class="memory-card">
+            <img src="Dec 26, 2024.jpeg" alt="Memory 5">
+            <div class="placeholder">📷</div>
+        </div>
+        <div class="memory-card">
+            <img src="Feb 4, 2025.jpeg" alt="Memory 6">
+            <div class="placeholder">📷</div>
+        </div>
+        <div class="memory-card">
+            <img src="Apr 6, 2025.jpeg" alt="Memory 7">
+            <div class="placeholder">📷</div>
+        </div>
+        <div class="memory-card">
+            <img src="Sep 27, 2025.jpeg" alt="Memory 8">
+            <div class="placeholder">📷</div>
+        </div>
+    </div>
+</section>
+
+<!-- Love Jar -->
+<section class="love-jar-section">
+    <h2 class="section-title">A Jar of Reasons Why I Love You</h2>
+    <p style="text-align:center; color:#999; font-size:1rem; margin-bottom:2rem; font-style:italic;">Hover over the jar to reveal them ✨</p>
+    <div class="jar-container">
+        <div class="jar" id="jar" onmouseover="openJar()">🏺</div>
+        <div class="reasons-container" id="reasonsContainer"></div>
+    </div>
+</section>
+
+<!-- Sealed Letter -->
+<section class="sealed-letter-section">
+    <h2 class="section-title">A Letter Just For You</h2>
+    <p style="text-align:center; color:#999; font-size:1rem; margin-bottom:3rem; font-style:italic;">Click the envelope to open 💌</p>
+    <div class="sealed-container">
+        <div class="envelope" id="envelope" onclick="openLetter()">✉️</div>
+        <div class="sealed-letter-content" id="sealedContent">
+            <h3>Joshua,</h3>
+            <p>
+                Three years.
+            </p>
+            <p>
+                Three whole years of loving each other, growing with each other, choosing each other.
+            </p>
+            <p>
+                When I really sit and think about that, it overwhelms me in the softest way. Because three years isn’t small. It’s not temporary. It’s not accidental. It’s intentional.
+            </p>
+            <p>
+                We started this young. We didn’t have everything figured out. We were still learning who we were individually, and somehow we were also learning how to love each other at the same time. And that wasn’t always easy.
+            </p>
+            <p>
+                There were moments we misunderstood each other.
+                Moments where emotions were bigger than our words.
+                Moments where life outside of us felt stressful and heavy.
+            </p>
+            <p>
+                But we didn’t walk away.
+            </p>
+            <p>
+                That’s what makes this anniversary so meaningful to me.
+            </p>
+            <p>
+                You stayed.
+            </p>
+            <p>
+                Through my overthinking.
+                Through my emotional days.
+                Through the times I needed reassurance again and again.
+            </p>
+            <p>
+                And I stayed too.
+            </p>
+            <p>
+                Not because it was convenient. Not because I didn’t know anything else. But because every time things felt hard, I still looked at you and knew I wasn’t done fighting for us.
+            </p>
+            <p>
+                Over these three years, I’ve watched you grow in ways you probably don’t even notice. You’ve become steadier. More patient. More intentional. I see the way you try. I see the effort, even when it’s quiet. And that matters more to me than big gestures ever could.
+            </p>
+             <p>
+                And I’ve grown too.
+            </p>
+             <p>
+                I’ve learned how to speak instead of shutting down.
+                How to pause instead of react.
+                How to love you in ways that feel healthier and stronger.
+            </p>
+             <p>
+                We didn’t just stay the same people who started this relationship.
+We grew up together.
+            </p>
+             <p>
+                That’s something not everyone gets to experience.
+            </p>
+             <p>
+                Three years later, my love for you doesn’t feel like butterflies anymore. It feels deeper than that. It feels safe. It feels steady. It feels like something built, not something imagined.
+            </p>
+             <p>
+                When I think about our future, I don’t think about a fairytale.
+            </p>
+             <p>
+                I think about real life.
+            </p>
+             <p>
+                Coming home to you.
+Building routines together.
+Working through stress instead of letting it break us.
+Creating a home that feels warm because we chose to fill it with patience and love.
+            </p>
+             <p>
+                I think about little footsteps one day.
+I think about sitting next to you years from now, both of us older, both of us having grown even more — and still choosing each other.
+            </p>
+             <p>
+                If we could build this much in three years while we were still learning ourselves… imagine what we can build in ten.
+            </p>
+             <p>
+                Joshua, loving you has changed me in ways I can’t fully explain. You’ve shown me what it feels like to be chosen consistently. To be worked through instead of walked away from. To be understood instead of dismissed.
+            </p>
+             <p>
+                That is something I will never take lightly.
+            </p>
+             <p>
+                Three years ago, I chose you.
+            </p>
+            <p>
+                Today, I choose you again.
+            </p>
+            <p>
+                I’m choosing you with intention.
+With growth.
+With hope.
+With faith in what we’re building.
+            </p>
+            <p>
+                Happy three years, my love. 
+            </p>
+            <p>
+                Here’s to everything we’ve survived, everything we’ve learned, and everything we’re still going to build — together.
+            </p>    
+            <p style="margin-top:1.5rem;">Always you,<br>Cadee 💖</p>
+            <div class="close-letter">
+                <button onclick="closeLetter()">Close Letter</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Final Message -->
+<section class="final-section">
+    <div class="final-message">
+        Josh, you are my constant, my joy, and my home. Every day with you is a gift I never want to take for granted. Here's to us, forever. 💖
+    </div>
+    <div class="signature">— Cadee</div>
+</section>
+
+<!-- Music Control -->
+<div class="music-control">
+    <button class="music-btn" id="musicBtn">🔇</button>
+</div>
+
+
+<!-- Music -->
+<audio id="music" src="If You Love Me for Me (from 'Barbie as the Princess and the Pauper').mp3" loop></audio>
+
+<script>
+    // --- Music Control ---
+    let isMusicPlaying = false;
+    const music = document.getElementById('music');
+    const musicBtn = document.getElementById('musicBtn');
+
+    function setMusicState(playing){
+        isMusicPlaying = !!playing;
+        musicBtn.textContent = isMusicPlaying ? '🎵' : '🔇';
+    }
+
+    function toggleMusic(){
+        if(isMusicPlaying){
+            music.pause();
+            setMusicState(false);
+        } else {
+            music.play().then(() => {
+                setMusicState(true);
+            }).catch(err => {
+                console.log('Play prevented or failed:', err);
+                setMusicState(false);
+            });
+        }
+    }
+
+    // Try to autoplay on page load (only mark playing when it actually starts)
+    window.addEventListener('load', function(){
+        setTimeout(() => {
+            music.play().then(() => {
+                setMusicState(true);
+            }).catch(err => {
+                console.log('Autoplay prevented by browser:', err);
+                setMusicState(false);
+            });
+        }, 500);
+    });
+
+    // Attach toggle handler to the button
+    musicBtn.addEventListener('click', toggleMusic);
+
+    // --- HEARTS CREATION ---
+    (function createHearts(){
+      const container = document.getElementById('hearts');
+      const emojis = ['💖','💕','💛','💗'];
+      for(let i=0;i<28;i++){
+        const el = document.createElement('div');
+        el.className = 'heart';
+        el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+        el.style.left = (Math.random()*100) + '%';
+        el.style.fontSize = (8 + Math.random()*28) + 'px';
+        const dur = (12 + Math.random()*12).toFixed(2);
+        const delay = (Math.random()*-20).toFixed(2);
+        el.style.animationDuration = dur + 's';
+        el.style.animationDelay = delay + 's';
+        container.appendChild(el);
+      }
+    })();
+
+    // --- Days Together Counter ---
+    function updateDaysTogether(){
+        const start = new Date(2023,1,28); // Feb is month 1 (0-indexed)
+        const today = new Date();
+        const diff = Math.floor((today-start)/ (1000*60*60*24));
+        document.getElementById('daysTogether').textContent = `Days Together: ${diff}`;
+    }
+    updateDaysTogether();
+
+    // --- Love Letters ---
+    const letters = [
+        `Joshua,
+        If I had to go back to the very beginning of us and choose again, I would. Every single time. Not because everything has been perfect — but because it's been real.
+        We've had moments where things felt heavy. Where emotions ran high. Where silence felt louder than words. But even then… I never stopped wanting you. I never stopped choosing you in my heart.
+        Loving you isn't just a feeling for me. It's something I wake up and decide. And I'm proud of that.`,
+        
+        `I don't think people talk enough about the kind of love that survives the hard days.
+        The days where I overthink.
+        The days where you're stressed.
+        The days where we don't fully understand each other.
+        But what matters to me is that we stay. We don't run. We don't give up at the first discomfort. We learn. We adjust. We soften.
+        That's the kind of love I want forever.`,
+
+        `There's something about you that feels like home.
+        Not excitement. Not butterflies.
+        But safety.
+        The kind of safety where I can cry without pretending I'm okay. The kind where I don't have to compete or prove myself. The kind where I can just exist — and still be loved.
+        You don't even realise how much that means to me.`,
+        
+        `Joshua,
+        If I had to go back to the very beginning of us and choose again, I would. Every single time. Not because everything has been perfect — but because it's been real.
+        We've had moments where things felt heavy. Where emotions ran high. Where silence felt louder than words. But even then… I never stopped wanting you. I never stopped choosing you in my heart.
+        Loving you isn't just a feeling for me. It's something I wake up and decide. And I'm proud of that.`,
+        
+        `I don't think we give ourselves enough credit.
+        We were young. We were still figuring out who we were as individuals, and somehow we were also trying to figure out how to love each other at the same time. That's not easy. And yet… we did it.
+        We didn't walk away when things got uncomfortable. We didn't choose the easy way out. We stayed through misunderstandings, through growing pains, through moments where loving each other meant being patient instead of being right.
+        I'm proud of us.
+        Not because we're perfect.
+        But because we're still here.
+        And staying is a quiet kind of love that people don't talk about enough`,
+        
+        `You know I overthink.
+        Sometimes my mind creates fears that aren't even real. Sometimes I get quiet because I'm scared of being "too much." Sometimes I just need reassurance even when nothing is wrong.
+        But every time, you've shown me something important.
+        You stay.
+        You don't laugh at my emotions. You don't tell me I'm crazy. You don't make me feel small. You try to understand me. And that makes me feel safe in a way I can't fully explain.
+        You've taught me that love isn't about never feeling scared.
+        It's about feeling scared… and knowing someone is still holding your hand.`, 
+        
+        `I know you sometimes doubt yourself.
+        I know you don't always see what I see.
+        But I wish you could look at yourself through my eyes for just a minute. You would see someone who stayed when it mattered. Someone who tries. Someone who has grown quietly and consistently.
+        You don't need to be richer. Cooler. More impressive.
+        You are already enough for me.
+        And I hope one day you believe that the way I do.`, 
+        
+        `There's something I want you to know very clearly.
+        I'm not loving you temporarily.
+        I'm not here because it's convenient.
+        I'm not here because I don't know anything else.
+        I'm here because I want you.
+        Through the stressful days. Through the money worries. Through the phases where we're both tired and life feels overwhelming.
+        I don't want a perfect relationship.
+        I want a real one.
+        And real means choosing each other even when it would be easier not to.`, 
+        
+        `When I imagine my future, I don't picture something grand or dramatic.
+        I picture simple things.
+        Coming home to you.
+        Sitting next to you after a long day.
+        Arguing over small things and then laughing five minutes later.
+        Building routines. Growing older. Learning each other over and over again.
+        I don't just love you for who you are right now.
+        I love you for who we're becoming together.
+        And that's what makes this feel deeper than just "young love."
+        It feels intentional.`, 
+        
+        `There were moments where loving me probably wasn't easy.
+        When I needed reassurance again.
+        When I got quiet instead of explaining what I felt.
+        When I overthought something small into something bigger.
+        And you stayed.
+        You didn't run.
+        You didn't say it was "too much."
+        You didn't make me feel like a burden.
+        You stayed.
+        And that has healed parts of me you don't even know were broken.`, 
+        
+        `Three years ago, I didn't fully understand what we were building.
+        Now I do.
+        We weren't just dating.
+        We were learning how to become partners.
+        We've grown up a little. We've matured. We've learned how to fight for each other instead of against each other.
+        And if this is what two years looks like… I can't wait to see what ten looks like.
+        Because if we can love like this while we're still growing…
+        Imagine us when we're fully settled into who we are.`
+    ];
+    let currentLetterIndex=0;
+    document.getElementById('totalLetters').textContent=letters.length;
+    function updateLetter(){
+        const textEl=document.getElementById('letterText');
+        textEl.style.opacity='0';
+        setTimeout(()=>{ textEl.textContent=letters[currentLetterIndex]; textEl.style.opacity='1'; document.getElementById('currentLetter').textContent=currentLetterIndex+1; },300);
+    }
+    function nextLetter(){ currentLetterIndex=(currentLetterIndex+1)%letters.length; updateLetter(); }
+    function prevLetter(){ currentLetterIndex=(currentLetterIndex-1+letters.length)%letters.length; updateLetter(); }
+    window.addEventListener('load', updateLetter);
+
+    // --- Timeline Animation on Scroll ---
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    function showTimeline(){
+        const triggerBottom = window.innerHeight * 0.85;
+        timelineItems.forEach(item=>{
+            const itemTop = item.getBoundingClientRect().top;
+            if(itemTop < triggerBottom){
+                item.classList.add('visible');
+            }
+        });
+    }
+    window.addEventListener('scroll', showTimeline);
+    showTimeline();
+
+    // --- Love Jar ---
+    const jarReasons = [
+        "Your laugh is my favorite sound",
+        "You make me want to be better",
+        "Your love feels like home",
+        "The way you listen to me",
+        "Your surprising kindness",
+        "How you make ordinary moments special",
+        "Your strength in hard times",
+        "The way you hold my hand",
+        "Your silly jokes and random texts",
+        "How you love without hesitation",
+        "You bring out my best self",
+        "Your loyalty means everything"
+    ];
+    
+    function openJar(){
+        const container = document.getElementById('reasonsContainer');
+        const idx = Math.floor(Math.random() * jarReasons.length);
+        const reason = jarReasons[idx];
+        
+        const el = document.createElement('div');
+        el.className = 'reason';
+        el.textContent = reason;
+        el.style.left = (Math.random() * 60 + 20) + '%';
+        el.style.top = '50%';
+        container.appendChild(el);
+        
+        setTimeout(() => el.remove(), 3000);
+    }
+
+    // --- Photo Gallery Image Loading ---
+    const memoryCards = document.querySelectorAll('.memory-card');
+    memoryCards.forEach(card => {
+        const img = card.querySelector('img');
+        if(img){
+            img.addEventListener('load', () => {
+                if(img.naturalWidth && img.naturalWidth > 0){
+                    card.classList.add('has-image');
+                }
+            });
+            img.addEventListener('error', () => {
+                console.log('Image not found: ' + img.src);
+            });
+            if(img.complete && img.naturalWidth && img.naturalWidth > 0){
+                card.classList.add('has-image');
+            }
+        }
+    });
+
+    // --- Sealed Letter open/close ---
+    function openLetter(){
+        const env = document.getElementById('envelope');
+        const content = document.getElementById('sealedContent');
+        if(env && content){
+            env.classList.add('opened');
+            content.classList.add('revealed');
+            content.scrollIntoView({behavior:'smooth', block:'center'});
+        }
+    }
+    function closeLetter(){
+        const env = document.getElementById('envelope');
+        const content = document.getElementById('sealedContent');
+        if(env && content){
+            env.classList.remove('opened');
+            content.classList.remove('revealed');
+            window.scrollTo({top:0, behavior:'smooth'});
+        }
+    }
+</script>
+</body>
+</html>
